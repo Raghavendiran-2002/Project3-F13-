@@ -1,18 +1,40 @@
-version: "3"
-services:
-  backend:
-    container_name: backend
-    restart: always
-    build: ./Backend/ .
-    ports:
-      - "3000:3000"
+version: "3.8"
 
-  frontend:
-    build: ./Frontend/ .
-    ports:
-      - "3001:3001"
-    volumes:
-      - ./frontend/src:/code/src
-      - /code/node_modules
+services:
+  bezkoder-api:
     depends_on:
+      - mysqldb
+    build: ./bezkoder-api
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+    environment:
+      - DB_HOST=mysqldb
+      - DB_USER=$MYSQLDB_USER
+      - DB_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+      - DB_NAME=$MYSQLDB_DATABASE
+      - DB_PORT=$MYSQLDB_DOCKER_PORT
+      - CLIENT_ORIGIN=$CLIENT_ORIGIN
+    networks:
       - backend
+      - frontend
+
+  bezkoder-ui:
+    depends_on:
+      - bezkoder-api
+    build:
+      context: ./bezkoder-ui
+      args:
+        - REACT_APP_API_BASE_URL=$CLIENT_API_BASE_URL
+    ports:
+      - $REACT_LOCAL_PORT:$REACT_DOCKER_PORT
+    networks:
+      - frontend
+
+volumes:
+  db:
+
+networks:
+  backend:
+  frontend:

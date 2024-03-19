@@ -1,37 +1,19 @@
-# syntax=docker/dockerfile:1.4
+# Stage 1
+FROM node:14 as build-stage
 
-FROM node:lts AS development
+COPY package.json .
+RUN npm install
+COPY . .
 
-ENV CI=true
-ENV PORT=3001
-
-WORKDIR /code
-COPY package.json /code/package.json
-COPY package-lock.json /code/package-lock.json
-RUN npm ci
-COPY . /code
-
-CMD [ "npm", "start" ]
-
-FROM development AS builder
+ARG REACT_APP_API_BASE_URL
+ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
 
 RUN npm run build
 
-FROM development as dev-envs
-RUN <<EOF
-apt-get update
-apt-get install -y --no-install-recommends git
-EOF
+# Stage 2
+FROM nginx:1.17.0-alpine
 
-RUN <<EOF
-useradd -s /bin/bash -m vscode
-groupadd docker
-usermod -aG docker vscode
-EOF
-# install Docker tools (cli, buildx, compose)
-COPY --from=gloursdocker/docker / /
-CMD [ "npm", "start" ]
+COPY --from=build-stage /bezkoder-ui/build /usr/share/nginx/html
+EXPOSE $REACT_DOCKER_PORT
 
-FROM nginx:1.13-alpine
-
-COPY --from=builder /code/build /usr/share/nginx/html
+CMD nginx -g 'daemon off;'
