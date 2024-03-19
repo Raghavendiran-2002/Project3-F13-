@@ -3,14 +3,12 @@ services:
   backend:
     container_name: backend
     restart: always
-    build:
-      context: Backend
+    build: ./Backend/ .
     ports:
       - "3000:3000"
 
   frontend:
-    build:
-      context: Frontend
+    build: ./Frontend/ .
     ports:
       - "3001:3001"
     volumes:
