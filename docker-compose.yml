@@ -2,8 +2,6 @@ version: "3.8"
 
 services:
   bezkoder-api:
-    depends_on:
-      - mysqldb
     build: ./Backend
     restart: unless-stopped
     env_file: ./.env
