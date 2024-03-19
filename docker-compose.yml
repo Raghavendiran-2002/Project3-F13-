@@ -1,8 +1,8 @@
 version: "3.8"
 
 services:
-  bezkoder-api:
-    build: ./Backend
+  backend:
+    build: ./backend
     restart: unless-stopped
     env_file: ./.env
     ports:
@@ -18,11 +18,11 @@ services:
       - backend
       - frontend
 
-  bezkoder-ui:
+  frontend:
     depends_on:
-      - bezkoder-api
+      - backend
     build:
-      context: ./Frontend
+      context: ./frontend
       args:
         - REACT_APP_API_BASE_URL=$CLIENT_API_BASE_URL
     ports:
