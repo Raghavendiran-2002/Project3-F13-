@@ -26,9 +26,9 @@ const NavAuth = () => {
         </li>
       </div>
       <Link to={"/auth"}>
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+        {/* <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
           Login
-        </button>
+        </button> */}
       </Link>
     </nav>
   );
