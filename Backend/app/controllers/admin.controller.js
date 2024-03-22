@@ -52,7 +52,7 @@ exports.findAll = (req, res) => {
 
 // Find a single Admin with an id
 exports.findOne = (req, res) => {
-  const id = req.params.title;
+  const id = req.params.id;
 
   Admin.findByPk(id)
     .then((data) => {
