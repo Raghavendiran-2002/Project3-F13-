@@ -4,10 +4,12 @@ require("dotenv").config();
 const app = express();
 
 var corsOptions = {
-  origin: process.env.CLIENT_ORIGIN || "http://localhost:8081",
+  origin: ["http://localhost:8081", "http://127.0.0.1:8888"],
 };
 
-app.use(cors(corsOptions));
+app.options("*", cors());
+
+app.use(cors());
 
 // parse requests of content-type - application/json
 app.use(express.json());
